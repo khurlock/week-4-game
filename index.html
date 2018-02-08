@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>RPG Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/style.css" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<style>
+    .fader {
+        opacity: 0.4;
+    }
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <div id="characters" class="row"></div>
+        <div id="gameplay" class="row"></div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+    <script>
+    $(document).ready(function(){
+        var chosenHero
+        var chosenEnemy
+        var isHeroChosen
+        var isEnemyChosen
+        var isHeroAlive
+        var isEnemyAlive
+
+        function initGame() {
+            isHeroChosen = false
+            isEnemyChosen = false
+
+            for (var i = 0; i < charArr.length; i++) {
+                var num = Math.floor(12 / charArr.length)
+                var charThing = $("<div class='myChar col-md-" + num + "' value='" + i + "'><img style='width:100%;' src='" + charArr[i].image + "'></div>")
+
+                $("#characters").append(charThing)
+            }
+        }
+
+        $(document).on("click", ".myChar", function() {
+            if (isHeroChosen === false) {
+                chosenHero = charArr[$(this).attr("value")]
+                isHeroChosen = true
+                $(this).addClass("fader")
+                console.log(chosenHero)
+            }
+
+            else if (isEnemyChosen === false && chosenHero.name != charArr[$(this).attr("value")].name) {
+                chosenEnemy = charArr[$(this).attr("value")]
+                isEnemyChosen = true
+                $(this).addClass("fader")
+                console.log(chosenEnemy)
+            }
+        })
+
+        var charArr = [
+            {
+                name : "char1",
+                hp : 50,
+                strength: 50,
+                image : "assets/images/char1.jpg"
+            },
+            {
+                name : "char2",
+                hp : 50,
+                strength: 50,
+                image : "assets/images/char2.jpg"
+            },
+            {
+                name : "char3",
+                hp : 50,
+                strength: 50,
+                image : "assets/images/char3.jpg"
+            },
+            {
+                name : "char4",
+                hp : 50,
+                strength: 50,
+                image : "assets/images/char4.jpg"
+            },
+            {
+                name : "char5",
+                hp : 50,
+                strength: 50,
+                image : "assets/images/char5.jpg"
+            },
+            {
+                name : "char6",
+                hp : 50,
+                strength: 50,
+                image : "assets/images/char6.jpg"
+            },
+        ]
+
+        initGame()
+    });
+    </script>
+</body>
+</html>
