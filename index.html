@@ -5,10 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>RPG Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="assets/style.css" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 <style>
+    body {
+        background-image: url("assets/images/forest.png");
+        background-color: #cccccc;
+        color: #ffffff
+    }
     .fader {
         opacity: 0.4;
     }
@@ -17,20 +21,21 @@
 </head>
 <body>
     <div class="container">
-        <div id="characters" class="row"></div>
-        <div id="gameplay" class="row">
-            <div id="myHero" class="col-md-4"></div>
-            <div id="myBattle" class="col-md-4">
+        <div id="characters" class="row mt-3"></div>
+        <div id="gameplay" class="row mt-5">
+            <div id="myHero" class="col-md-4 mt-5"></div>
+            <div id="myBattle" class="col-md-4 mt-5">
                 <button type="button" class="btn btn-danger" id="attackBtn">Attack!</button>
-                <button type="button" class="btn btn-success" id="restartBtn">Restart</button>
+                <!-- <button type="button" class="btn btn-success" id="restartBtn">Restart</button> -->
             </div>
-            <div id="myEnemy" class="col-md-4"></div>
+            <div id="myEnemy" class="col-md-4 mt-5"></div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.js"
     integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
     crossorigin="anonymous"></script>
+
     <script>
     $(document).ready(function(){
         var chosenHero
@@ -39,9 +44,10 @@
         var isEnemyChosen
         var isHeroAlive
         var isEnemyAlive
+        var pastChosen = []
 
         $("#attackBtn").hide()
-        $("#restartBtn").hide()
+        // $("#restartBtn").hide()
 
         function initGame() {
             isHeroChosen = false
@@ -49,8 +55,7 @@
 
             for (var i = 0; i < charArr.length; i++) {
                 var num = Math.floor(12 / charArr.length)
-                var charThing = $("<div class='myChar col-md-" + num + "' value='" + i + "'><img style='width:100%;' src='" + charArr[i].image + "'></div>")
-
+                var charThing = $("<div class='myChar col-md-" + num + "' id='characters' value='" + i + "'><img style='width:100%;' src='" + charArr[i].image + "'></div>")
                 $("#characters").append(charThing)
             }
         }
@@ -60,74 +65,85 @@
                 chosenHero = charArr[$(this).attr("value")]
                 isHeroChosen = true
                 $(this).addClass("fader")
-                myHeroThing = $("<div id='" + chosenHero.name + "'><img src='" + chosenHero.image + "'><h1>" + chosenHero.name + "</h1><h6>Attack</h6><p id='heroAttack'>" + chosenHero.attack + "</p><h6>HP</h6><p id='heroHP'>" + chosenHero.hp + "</p></div>")
+                myHeroThing = $("<div id='" + chosenHero.name + "'><img src='" + chosenHero.image + "'><h1>" + chosenHero.name + "</h1><h6>HP</h6><p id='heroHP'>" + chosenHero.hp + "</p></div>")
                 $("#myHero").html(myHeroThing)
-                console.log(chosenHero)
+                $(this).removeClass("myChar")
+                $("#attackBtn").show()
             }
-
             else if (isEnemyChosen === false && chosenHero.name != charArr[$(this).attr("value")].name) {
                 chosenEnemy = charArr[$(this).attr("value")]
                 isEnemyChosen = true
                 $(this).addClass("fader")
-                myEnemyThing = $("<div id='" + chosenEnemy.name + "'><img src='" + chosenEnemy.image + "'><h1>" + chosenEnemy.name + "</h1><h6>Attack</h6><p id='enemyAttack'>" + chosenEnemy.attack + "</p><h6>HP</h6><p id='enemyHP'>" + chosenEnemy.hp + "</p></div>")
+                myEnemyThing = $("<div id='" + chosenEnemy.name + "'><img src='" + chosenEnemy.image + "'><h1>" + chosenEnemy.name + "</h1><h6>HP</h6><p id='enemyHP'>" + chosenEnemy.hp + "</p></div>")
                 $("#myEnemy").html(myEnemyThing)
+                $(this).removeClass("myChar")
                 $("#attackBtn").show()
-                console.log(chosenEnemy)
             }
+            else if (pastChosen.length === charArr.length - 2) {
+                $("#restartBtn").show()
+            }
+        console.log(pastChosen)
         })
 
-        $("button").on("click", function() {
-            $("#heroHP").html(chosenHero.hp -= chosenEnemy.attack)
-            $("#enemyHP").html(chosenEnemy.hp -= chosenHero.attack)
+        $("#attackBtn").on("click", function() {
+            $("#heroHP").html(chosenHero.hp -= Math.floor(Math.random() * 10))
+            $("#enemyHP").html(chosenEnemy.hp -= Math.floor(Math.random() * 10))
             
             if (chosenEnemy.hp <= 0) {
                 $("#myEnemy").html("<h1>YOU WIN</h1><h6>Chose your next opponent.</h6>")
+                $("#attackBtn").hide()
+                chosenHero.hp = 50
+                $("#heroHP").html(chosenHero.hp)
                 isEnemyChosen = false
             }
             else if (chosenHero.hp <= 0) {
-                $("#myHero").html("<h1>YOU LOST</h1><h6>Chose your next opponent.</h6>")
+                $("#myHero").html("<h1>YOU LOST</h1><h6>Chose your next hero.</h6>")
+                $("#attackBtn").hide()
+                chosenEnemy.hp = 50
+                $("#enemyHP").html(chosenEnemy.hp)
                 isHeroChosen = false
             }
         })
 
+        // function restart() {
+        //     for (var i = 0; i < charArr.length; i++) {
+        //         charArr[i].hp = 50
+        //     }
+        // }
+                
         var charArr = [
             {
                 name : "char1",
                 hp : 50,
-                attack: 10,
                 image : "assets/images/char1.jpg"
             },
             {
                 name : "char2",
                 hp : 50,
-                attack: 12,
                 image : "assets/images/char2.jpg"
             },
             {
                 name : "char3",
                 hp : 50,
-                attack: 14,
                 image : "assets/images/char3.jpg"
             },
             {
                 name : "char4",
                 hp : 50,
-                attack: 16,
                 image : "assets/images/char4.jpg"
             },
             {
                 name : "char5",
                 hp : 50,
-                attack: 13,
                 image : "assets/images/char5.jpg"
             },
             {
                 name : "char6",
                 hp : 50,
-                attack: 11,
                 image : "assets/images/char6.jpg"
             },
         ]
+        console.log(charArr.length)
 
         initGame()
     });
